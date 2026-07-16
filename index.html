@@ -1,556 +1,478 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lemon Shark — Interactive Hub</title>
-    <style>
-        :root {
-            /* PASTEL YELLOW COLOUR PALETTE */
-            --bg-pastel-yellow: #fef9e7;
-            --panel-white: #ffffff;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --accent-lemon: #f4d03f;
-            --accent-glow: rgba(244, 208, 63, 0.4);
-            --border-light: #edf2f7;
-            --discord-light-panel: #f7fafc;
-            --tiktok-light-viewport: #edf2f7;
-        }
-
-        body, html {
-            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-pastel-yellow);
-            color: var(--text-main);
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Top Auth Navbar Bar */
-        .top-navbar {
-            position: absolute;
-            top: 0; right: 0; left: 0;
-            height: 60px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 24px;
-            z-index: 100;
-            gap: 12px;
-        }
-        .btn {
-            padding: 9px 18px;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            background: var(--panel-white);
-            color: var(--text-main);
-            transition: all 0.25s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-        }
-        .btn:hover {
-            background-color: #f7fafc;
-            border-color: #cbd5e0;
-            transform: translateY(-1px);
-        }
-        .btn-primary {
-            background: var(--accent-lemon);
-            border: 1px solid #f1c40f;
-            color: #2d3748;
-        }
-        .btn-primary:hover {
-            background: #f1c40f;
-            box-shadow: 0 4px 12px var(--accent-glow);
-        }
-        .user-status {
-            display: none;
-            font-size: 14px;
-            font-weight: 600;
-            color: #2f855a;
-            background: #c6f6d5;
-            border: 1px solid #9ae6b4;
-            padding: 6px 16px;
-            border-radius: 20px;
-        }
-
-        /* Search Dashboard Landing View */
-        .search-engine-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            width: 100%;
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 10;
-            background: var(--bg-pastel-yellow);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        .logo {
-            font-size: 5rem;
-            font-weight: 700;
-            margin-bottom: 28px;
-            letter-spacing: -1.5px;
-            color: var(--text-main);
-        }
-        .logo span { color: #f1c40f; }
-        .search-box-wrapper { width: 90%; max-width: 584px; }
-        .search-input-field {
-            width: 100%; box-sizing: border-box; padding: 14px 24px; font-size: 16px;
-            color: var(--text-main); background: var(--panel-white); border: 1px solid #dfe1e5;
-            border-radius: 24px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            transition: all 0.3s ease;
-        }
-        .search-input-field:focus {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 3px var(--accent-glow);
-            border-color: var(--accent-lemon);
-        }
-
-        /* Platform Hybrid Workspace Layout Dashboard */
-        .platform-workspace {
-            display: none;
-            height: 100vh; width: 100vw;
-            position: absolute; top: 0; left: 0;
-            z-index: 5; opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        /* Discord Panel Sidebar */
-        .discord-panel {
-            width: 280px;
-            background-color: var(--discord-light-panel);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid var(--border-light);
-            height: 100%;
-            z-index: 20;
-        }
-        .discord-header {
-            padding: 18px 16px;
-            font-weight: 700;
-            font-size: 16px;
-            border-bottom: 1px solid var(--border-light);
-            color: var(--text-main);
-            background: #fff;
-        }
-        .channel-directory {
-            list-style: none; padding: 10px 8px; margin: 0;
-            flex-grow: 1; overflow-y: auto;
-        }
-        .channel-node {
-            padding: 10px 12px; border-radius: 6px; cursor: pointer;
-            margin-bottom: 4px; font-size: 14px; color: var(--text-muted);
-            transition: all 0.2s ease; font-weight: 500;
-        }
-        .channel-node::before { content: "# "; font-weight: bold; }
-        .channel-node:hover { background-color: #edf2f7; color: var(--text-main); }
-        .channel-node.active { background-color: #fef08a; color: #854d0e; }
-        
-        .management-section {
-            padding: 12px; background: #fff; border-top: 1px solid var(--border-light);
-            display: none; flex-direction: column; gap: 8px;
-        }
-        .management-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* TikTok Module Viewport Panel */
-        .tiktok-panel {
-            flex-grow: 1; background-color: var(--panel-white);
-            display: flex; justify-content: center; align-items: center;
-            position: relative; height: 100%;
-        }
-        .video-viewport {
-            width: 100%; max-width: 440px; height: 85vh;
-            background: #000; border-radius: 16px;
-            overflow: hidden; position: relative;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        .video-viewport video { width: 100%; height: 100%; object-fit: contain; }
-
-        /* TikTok Navigation Controls */
-        .feed-navigation-controls {
-            position: absolute; right: 30px;
-            display: flex; flex-direction: column; gap: 15px; z-index: 40;
-        }
-        .nav-circle-btn {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: var(--panel-white); border: 1px solid var(--border-light);
-            color: var(--text-main); font-size: 18px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .nav-circle-btn:hover { background: var(--accent-lemon); border-color: #f1c40f; transform: scale(1.05); }
-
-        /* Modals and Overlays Management Blueprints */
-        .modal-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); z-index: 1000;
-            justify-content: center; align-items: center;
-            backdrop-filter: blur(4px);
-        }
-        .modal-card {
-            background: #fff; border-radius: 16px;
-            width: 90%; max-width: 400px; padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .modal-card h3 { margin-top: 0; margin-bottom: 16px; font-size: 20px; }
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
-        .input-group input, .input-group select {
-            width: 100%; box-sizing: border-box; padding: 10px 14px;
-            border: 1px solid #cbd5e0; border-radius: 8px; outline: none; font-size: 14px;
-        }
-        .input-group input:focus { border-color: #f1c40f; box-shadow: 0 0 0 3px var(--accent-glow); }
-        .modal-footer-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
-        .close-modal-x {             position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted);
-        }
-
-        /* Dynamic Visual Color Dot Icon blueprint */
-        .channel-indicator-dot {
-            display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Upper Control Navbar -->
-    <div class="top-navbar" id="globalNav">
-        <span id="userBadge" class="user-status">🍋 Active Explorer</span>
-        <button id="authModalTriggerBtn" class="btn btn-primary" onclick="openModalView('authModal')">Sign In / Register</button>
-    </div>
-
-    <!-- Google Style Pure Search Dashboard View -->
-    <div class="search-engine-view" id="googleHomepage">
-        <div class="logo">Lemon <span>Shark</span></div>
-        <div class="search-box-wrapper">
-            <input type="text" class="search-input-field" id="mainSearchInput" placeholder="Search categories, tags, or servers..." onkeydown="if(event.key==='Enter') evaluateSearchQuery()">
-        </div>
-    </div>
-
-    <!-- Workspace View Panel System -->
-    <div class="platform-workspace" id="mainAppWorkspace">
-        
-        <!-- Discord Module Panel Sidebar -->
-        <div class="discord-panel">
-            <div class="discord-header">🍋 Lemon Shark Media</div>
-            <ul class="channel-directory" id="channelsListContainer">
-                <li class="channel-node active" id="node-all" onclick="filterDataFeedScope('all')">global-broadcast</li>
-            </ul>
-
-            <!-- Conditional Channel Creation Widget: Visible ONLY when Logged In with Email -->
-            <div class="management-section" id="channelManagementWidget">
-                <span class="management-title">Channel Node Configuration</span>
-                <button class="btn btn-primary" style="font-size:12px; padding:6px 12px;" onclick="openModalView('createChannelModal')">✨ Add Channel</button>
+<html>
+    <head>
+        <title>
+            Youtube.com Clone
+        </title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles/general.css">
+        <link rel="stylesheet" href="styles/header.css">
+        <link rel="stylesheet" href="styles/video.css">
+        <link rel="stylesheet" href="styles/sidebar.css">
+    </head>
+    <body>
+        <header class="header">
+            <div class="left-section">
+                <img class="hamburger-logo" src="icons/hamburger-menu.svg">
+                <img class="youtube-logo" src="icons/youtube-logo.svg">
             </div>
-
-            <div class="management-section" id="videoManagementWidget">
-                <span class="management-title">Content Suite Controls</span>
-                <button class="btn btn-primary" style="font-size:12px; padding:6px 12px;" onclick="openModalView('addVideoModal')">🎬 Add Video</button>
+            <div class="middle-section">
+                <input class="search-bar" type="text" placeholder="Search">
+                <button class="search-button">
+                    <img class="search-icon" src="icons/search.svg">
+                    <div class="tooltip">Search</div>
+                </button>
+                <button class="voice-search-button">
+                    <img class="voice-search-icon" src="icons/voice-search-icon.svg">
+                    <div class="tooltip">Search with your voice</div>
+                </button>
             </div>
-        </div>
-
-        <div class="tiktok-panel">
-            <div class="video-viewport">
-                <video id="liveVideoFrameworkPlayer" controls autoplay loop muted src="https://googleapis.com"></video>
+            <div class="right-section">
+                <div class="upload-icon-container">
+                    <img class="upload-icon" src="icons/upload.svg">
+                    <div class="tooltip">Create</div>
+                </div>
+                <div class="youtube-apps-icon-container">
+                    <img class="youtube-apps-icon" src="icons/youtube-apps.svg">
+                    <div class="tooltip">Youtube apps</div>
+                </div>
+                <div class="notifications-icon-container">
+                    <img class="notifications-icon" src="icons/notifications.svg">
+                    <div class="notifications-count">3</div>
+                    <div class="tooltip">Notifications</div>
+                </div>
+                <img class="current-user-picture-icon" src="channel-pictures/my-channel.jpg">
             </div>
-            <div class="feed-navigation-controls">
-                <button class="nav-circle-btn" onclick="stepMediaFeed('up')">▲</button>
-                <button class="nav-circle-btn" onclick="stepMediaFeed('down')">▼</button>
+        </header>
+        <nav class="sidebar">
+            <div class="sidebar-link">
+                <img src="icons/home.svg">
+                <div>Home</div>
             </div>
-        </div>
-    </div>
-
-    <!-- Multi-Mode Email Auth Modal Box -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal-card">
-            <button class="close-modal-x" onclick="closeModalView('authModal')">✕</button>
-            <h3 id="authModalTitle">Sign Into Lemon Shark</h3>
-            <div class="input-group">
-                <label>Email Identity Token</label>
-                <input type="email" id="authEmailInput" placeholder="explorer@lemonshark.io">
+            <div class="sidebar-link">
+                <img src="icons/explore.svg">
+                <div>Explore</div>
             </div>
-            <div class="input-group">
-                <label>Security Key Access Token</label>
-                <input type="password" id="authPasswordInput" placeholder="••••••••">
+            <div class="sidebar-link">
+                <img src="icons/subscriptions.svg">
+                <div>Subscriptions</div>
             </div>
-            <div class="modal-footer-btns">
-                <span id="authToggleHint" style="font-size:12px; color:var(--text-muted); cursor:pointer; margin-right:auto; align-self:center;" onclick="toggleAuthInterfaceMode()">Need an account? Sign Up</span>
-                <button class="btn btn-primary" onclick="processEmailAuthentication()">Confirm Parameters</button>
+            <div class="sidebar-link">
+                <img src="icons/originals.svg">
+                <div>Originals</div>
             </div>
-        </div>
-    </div>
-
-    <!-- Create and Edit Channel Configuration Modal Overlay Box -->
-    <div class="modal-overlay" id="createChannelModal">
-        <div class="modal-card">
-            <button class="close-modal-x" onclick="closeModalView('createChannelModal')">✕</button>
-            <h3 id="channelModalTitle">Provision Content Channel</h3>
-            <div class="input-group">
-                <label>Channel Identity Display Name</label>
-                <input type="text" id="channelNameInput" placeholder="e.g. Neon Horizon Cinematic">
+            <div class="sidebar-link">
+                <img src="icons/youtube-music.svg">
+                <div>Youtube Music</div>
             </div>
-            <div class="input-group">
-                <label>Profile Brand Accent Theme</label>
-                <input type="color" id="channelColorInput" value="#f4d03f">
+            <div class="sidebar-link">
+                <img src="icons/library.svg">
+                <div>Library</div>
             </div>
-            <div class="modal-footer-btns">
-                <button id="deleteChannelBtn" class="btn" style="background:#fed7d7; color:#9b2c2c; display:none;" onclick="processChannelDeletion()">Delete Node</button>
-                <button class="btn btn-primary" id="channelSubmitActionBtn" onclick="processChannelCreation()">Deploy Channel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Video Link Context Overlay Form Drawer -->
-    <div class="modal-overlay" id="addVideoModal">
-        <div class="modal-card">
-            <button class="close-modal-x" onclick="closeModalView('addVideoModal')">✕</button>
-            <h3>Sync Video Stream Node</h3>
-            <div class="input-group">
-                <label>Target Broadcast Destination Channel</label>
-                <select id="videoTargetChannelSelector"></select>
-            </div>
-            <div class="input-group">
-                <label>Stream Video Content URL Asset Link</label>
-                <input type="text" id="videoSourceUrlInput" placeholder="https://example.com">
-            </div>
-            <div class="modal-footer-btns">
-                <button class="btn btn-primary" onclick="processVideoAttachment()">Publish Stream</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // System Framework Memory Repositories Arrays
-        let activeAuthViewMode = 'login';
-        let authenticatedUserIdentity = null;
-        let selectedFeedScopeId = 'all';
-        let currentActiveStreamIndex = 0;
-        let selectedEditingChannelId = null;
-
-        // Custom Stream Collections Arrays Mapping Registry Structures
-        const globalMediaPipelineDatabase = [
-            { scope: 'all', src: 'https://googleapis.com' },
-            { scope: 'all', src: 'https://googleapis.com' },
-            { scope: 'all', src: 'https://googleapis.com' }
-        ];
-
-        let userChannelsDictionary = {};
-
-        // 1. Overlay Framework Layout Windows Controllers Modifiers
-        function openModalView(modalId) {
-            if (modalId === 'createChannelModal' && selectedEditingChannelId === null) {
-                document.getElementById('channelModalTitle').innerText = "Provision Content Channel";
-                document.getElementById('channelSubmitActionBtn').innerText = "Deploy Channel";
-                document.getElementById('deleteChannelBtn').style.display = "none";
-                document.getElementById('channelNameInput').value = "";
-                document.getElementById('channelColorInput').value = "#f4d03f";
-            }
-            document.getElementById(modalId).style.display = 'flex';
-        }
-        function closeModalView(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            if (modalId === 'createChannelModal') selectedEditingChannelId = null;
-        }
-
-        // 2. Multi-Mode Email Identification Gateway Processors
-        function toggleAuthInterfaceMode() {
-            const title = document.getElementById('authModalTitle');
-            const hint = document.getElementById('authToggleHint');
-            if (activeAuthViewMode === 'login') {
-                activeAuthViewMode = 'signup';
-                title.innerText = "Register Space Account";
-                hint.innerText = "Already an Explorer? Log In";
-            } else {
-                activeAuthViewMode = 'login';
-                title.innerText = "Sign Into Lemon Shark";
-                hint.innerText = "Need an account? Sign Up";
-            }
-        }
-
-        function processEmailAuthentication() {
-            const email = document.getElementById('authEmailInput').value.trim();
-            const pass = document.getElementById('authPasswordInput').value.trim();
-
-            if (!email.includes('@') || pass.length < 4) {
-                alert("Security handshake failed: Require valid parameter structural sequences.");
-                return;
-            }
-
-            authenticatedUserIdentity = email;
-            
-            // Sync Interface Visibility Blocks to mirror operational hierarchy rules state transformations
-            document.getElementById('authModalTriggerBtn').style.display = 'none';
-            const badge = document.getElementById('userBadge');
-            badge.style.display = 'inline-block';
-            badge.innerText = `🍋 ${email.split('@')[0].toUpperCase()}`;
-            
-            // UNLOCK CHANNEL PRIVILEGES ONLY WHEN LOGGED IN
-            document.getElementById('channelManagementWidget').style.display = 'flex';
-
-            closeModalView('authModal');
-            alert("Handshake parameters confirmed! Identity locked securely to session node memory grid.");
-        }
-
-        // 3. Search Interception Redirection Logic Handlers
-        function evaluateSearchQuery() {
-            const query = document.getElementById('mainSearchInput').value.trim();
-            if (query === '') return;
-
-            const landingView = document.getElementById('googleHomepage');
-    const appWorkspaceView = document.getElementById('mainAppWorkspace');
-    landingView.style.opacity = '0';
-    setTimeout(() => {
-        landingView.style.display = 'none';
-        appWorkspaceView.style.display = 'flex';
-        setTimeout(() => { appWorkspaceView.style.opacity = '1'; }, 50);
-    }, 400);
-}
-
-// 4. Custom Channel Suite Engine Configuration Mechanics
-function processChannelCreation() {
-    const name = document.getElementById('channelNameInput').value.trim();
-    const color = document.getElementById('channelColorInput').value;
-
-    if (!name) {
-        alert("Channel namespaces require explicit string character assignments.");
-        return;
-    }
-
-    if (selectedEditingChannelId !== null) {
-        // EDIT EXISTING CHANNEL NAME AND PROFILE COLOR
-        userChannelsDictionary[selectedEditingChannelId].name = name;
-        userChannelsDictionary[selectedEditingChannelId].color = color;
-        alert("Channel modification matrices locked into database tree successfully.");
-    } else {
-        // PROVISION NEW CHANNEL NODE
-        const channelId = 'chan-' + Date.now();
-        userChannelsDictionary[channelId] = { name: name, color: color };
-    }
-
-    closeModalView('createChannelModal');
-    rebuildInterfaceChannelsDirectory();
-}
-
-function triggerChannelEditorMode(id) {
-    selectedEditingChannelId = id;
-    document.getElementById('channelModalTitle').innerText = "Edit Channel Parameters";
-    document.getElementById('channelSubmitActionBtn').innerText = "Save Changes";
-    document.getElementById('deleteChannelBtn').style.display = "inline-block";
-    
-    document.getElementById('channelNameInput').value = userChannelsDictionary[id].name;
-    document.getElementById('channelColorInput').value = userChannelsDictionary[id].color;
-    openModalView('createChannelModal');
-}
-
-function processChannelDeletion() {
-    if (!selectedEditingChannelId) return;
-    
-    if (confirm("Are you sure you want to completely erase this channel node pipeline configuration?")) {
-        delete userChannelsDictionary[selectedEditingChannelId];
-        closeModalView('createChannelModal');
-        filterDataFeedScope('all');
-        rebuildInterfaceChannelsDirectory();
-    }
-}
-
-function rebuildInterfaceChannelsDirectory() {
-    const listContainer = document.getElementById('channelsListContainer');
-    const selector = document.getElementById('videoTargetChannelSelector');
-    
-    // Reset node indices blocks layout blueprints structures
-    listContainer.innerHTML = `<li class="channel-node ${selectedFeedScopeId === 'all' ? 'active' : ''}" id="node-all" onclick="filterDataFeedScope('all')">global-broadcast</li>`;
-    selector.innerHTML = '';
-
-    let channelCount = 0;
-
-    for (const [id, config] of Object.entries(userChannelsDictionary)) {
-        channelCount++;
-        
-        // Append interactive sidebar row element containing edit access handles keys
-        listContainer.innerHTML += `
-            <li class="channel-node ${selectedFeedScopeId === id ? 'active' : ''}" id="node-${id}" onclick="filterDataFeedScope('${id}')" style="display:flex; align-items:center; justify-content:space-between;">
-                <span><span class="channel-indicator-dot" style="background:${config.color}"></span>${config.name}</span>
-                <button onclick="event.stopPropagation(); triggerChannelEditorMode('${id}')" style="background:transparent; border:none; cursor:pointer; font-size:11px;">✏️</button>
-            </li>`;
-
-        // Sync custom dropdown values indices mappings arrays lists updates elements
-        selector.innerHTML += `<option value="${id}">${config.name}</option>`;
-    }
-
-    // UNLOCK VIDEO ADDITIONS CONTROLS PRIVILEGES ONLY IF A USER OWNS AT LEAST ONE CHANNEL NODE
-    const videoWidget = document.getElementById('videoManagementWidget');
-    videoWidget.style.display = channelCount > 0 ? 'flex' : 'none';
-}
-
-// 5. Native Media Player Stream Control Execution Routing Loops
-function filterDataFeedScope(scopeId) {
-    selectedFeedScopeId = scopeId;
-    currentActiveStreamIndex = 0;
-
-    document.querySelectorAll('.channel-node').forEach(node => node.classList.remove('active'));
-    const targetNode = document.getElementById(`node-${scopeId}`);
-    if (targetNode) targetNode.classList.add('active');
-
-    syncFrameworkPlayerSourceAsset();
-}
-
-function processVideoAttachment() {
-    const targetChanId = document.getElementById('videoTargetChannelSelector').value;
-    const linkAssetUrl = document.getElementById('videoSourceUrlInput').value.trim();
-
-    if (!linkAssetUrl.startsWith('http')) {
-        alert("Target video properties links string must utilize explicit web URL structure paths.");
-        return;
-    }
-
-    // Lock custom content element securely onto system database list array allocations
-    globalMediaPipelineDatabase.push({ scope: targetChanId, src: linkAssetUrl });
-    
-    document.getElementById('videoSourceUrlInput').value = '';
-    closeModalView('addVideoModal');
-    
-    filterDataFeedScope(targetChanId);
-    alert("Cosmic video content attached and processed successfully!");
-}
-
-function stepMediaFeed(direction) {
-    const activeSubsetList = globalMediaPipelineDatabase.filter(video => 
-        selectedFeedScopeId === 'all' || video.scope === selectedFeedScopeId
-    );
-
-    if (activeSubsetList.length === 0) return;
-
-    if (direction === 'up') {
-        currentActiveStreamIndex = (currentActiveStreamIndex - 1 + activeSubsetList.length) % activeSubsetList.length;
-    } else {
-        currentActiveStreamIndex = (currentActiveStreamIndex + 1) % activeSubsetList.length;
-    }
-
-    syncFrameworkPlayerSourceAsset();
-}
-
-function syncFrameworkPlayerSourceAsset() {
-    const player = document.getElementById('liveVideoFrameworkPlayer');
-    const activeSubsetList = globalMediaPipelineDatabase.filter(video => 
-        selectedFeedScopeId === 'all' || video.scope === selectedFeedScopeId
-    );
-
-    if (activeSubsetList.length > 0 && activeSubsetList[currentActiveStreamIndex]) {
-        player.src = activeSubsetList[currentActiveStreamIndex].src;
-        player.style.display = "block";
-        player.play().catch(e => console.log("Stream autoplay state verification loop interrupted safely."));
-    } else {
-        player.pause();
-        player.style.display = "none";
-        alert("This custom stream channel segment does not contain any assigned video content links yet.");
-    }
-}
+        </nav>
+        <main>
+            <section class="video-grid">
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=n2RNcPRtAiY" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-1.webp">
+                        </a>
+                        <div class="video-time">14:20</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">   
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/mkbhd" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-1.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-1.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Marques Brownlee</p>
+                                        <p class="channel-tooltip-stats">16.6M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>                                                                                  
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=n2RNcPRtAiY" target="_blank" class="video-title-link">
+                                <p class="video-title">Talking Tech and AI with Google CEO Sundar Pichai!</p>
+                            </a>
+                            <div class="tooltip-hover">
+                                <a href="https://www.youtube.com/c/mkbhd" target="_blank" class="channel-link">
+                                    <p class="video-author">Marques Brownlee</p>
+                                </a>                            
+                                <p class="video-stats">3.4M views &#183; 6 months ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=mP0RAo9SKZk" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-2.webp">
+                        </a>                        
+                        <div class="video-time">8:22</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/markiplier" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-2.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-2.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Markiplier</p>
+                                        <p class="channel-tooltip-stats">34.3M subscribers</p>
+                                    </div>
+                                </div>         
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=mP0RAo9SKZk" target="_blank" class="video-title-link">
+                                <p class="video-title">Try Not to Laugh Challenge #9</p>
+                            </a>
+                            <a href="https://www.youtube.com/c/markiplier" target="_blank" class="channel-link">
+                                <p class="video-author">Markiplier</p>
+                            </a>                            
+                            <p class="video-stats">19M views &#183; 4 years ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=FgjPQQeTh1w" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-3.webp">
+                        </a>                        
+                        <div class="video-time">9:13</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/user/SSSniperWolf" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-3.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-3.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">SSSniperWolf</p>
+                                        <p class="channel-tooltip-stats">33.2M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=FgjPQQeTh1w" target="_blank" class="video-title-link">
+                                <p class="video-title">Crazy Tik Toks Taken Moments Before DISASTER</p>
+                            </a>
+                            <a href="https://www.youtube.com/user/SSSniperWolf" target="_blank" class="channel-link">
+                                <p class="video-author">SSSniperWolf</p>
+                            </a>                            
+                            <p class="video-stats">12M views &#183; 1 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=094y1Z2wpJg" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-4.webp">
+                        </a>                        
+                        <div class="video-time">22:09</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/veritasium" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-4.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-4.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Veritasium</p>
+                                        <p class="channel-tooltip-stats">13.3M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=094y1Z2wpJg" target="_blank" class="video-title-link">
+                                <p class="video-title">The Simplest Math Problem No One Can Solve - Collatz Conjecture</p>
+                            </a>
+                            <a href="https://www.youtube.com/c/veritasium" target="_blank" class="channel-link">
+                                <p class="video-author">Veritasium</p>
+                            </a>                            
+                            <p class="video-stats">18M views &#183; 4 months ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=86CQq3pKSUw" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-5.webp">
+                        </a>                        
+                        <div class="video-time">11:17</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/CSDojo" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-5.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-5.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">CS Dojo</p>
+                                        <p class="channel-tooltip-stats">1.89M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=86CQq3pKSUw" target="_blank" class="video-title-link">
+                                <p class="video-title">Kadane's Algorithm to Maximum Sum Subarray Problem</p>
+                            </a>
+                            <a href="https://www.youtube.com/c/CSDojo" target="_blank" class="channel-link">
+                                <p class="video-author">CS Dojo</p>
+                            </a>                            
+                            <p class="video-stats">519K views &#183; 5 years ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=yXWw0_UfSFg" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-6.webp">
+                        </a>                        
+                        <div class="video-time">19:59</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/channel/UCX6OQ3DkcsbYNE6H8uQQuVA" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-6.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-6.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">MrBeast</p>
+                                        <p class="channel-tooltip-stats">129M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=yXWw0_UfSFg" target="_blank" class="video-title-link">
+                                <p class="video-title">Anything You Can Fit In The Circle I’ll Pay For</p>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCX6OQ3DkcsbYNE6H8uQQuVA" target="_blank" class="channel-link">
+                                <p class="video-author">MrBeast</p>
+                            </a>                            
+                            <p class="video-stats">141M views &#183; 1 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=fNVa1qMbF9Y" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-7.webp">
+                        </a>                        
+                        <div class="video-time">10:13</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/channel/UCP5tjEmvPItGyLhmjdwP7Ww" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-7.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-7.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">RealLifeLore</p>
+                                        <p class="channel-tooltip-stats">6.56M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=fNVa1qMbF9Y" target="_blank" class="video-title-link">
+                                <p class="video-title">Why Planes Don't Fly Over Tibet</p>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCP5tjEmvPItGyLhmjdwP7Ww" target="_blank" class="channel-link">
+                                <p class="video-author">RealLifeLore</p>
+                            </a>                            
+                            <p class="video-stats">6.6M views &#183; 1 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=lFm4EM1juls" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-8.webp">
+                        </a>                        
+                        <div class="video-time">7:12</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/channel/UCHAK6CyegY22Zj2GWrcaIxg" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-8.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-8.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Tech Vision</p>
+                                        <p class="channel-tooltip-stats">798K subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=lFm4EM1juls" target="_blank" class="video-title-link">
+                                <p class="video-title">Inside The World's Biggest Passenger Plane</p>
+                            </a>
+                            <a href="https://www.youtube.com/channel/UCHAK6CyegY22Zj2GWrcaIxg" target="_blank" class="channel-link">
+                                <p class="video-author">Tech Vision</p>
+                            </a>
+                            <p class="video-stats">3.7M views &#183; 10 months ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=ixmxOlcrlUc" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-9.webp">
+                        </a>                        
+                        <div class="video-time">13:17</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/OFFICIALTHENXSTUDIOS" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-9.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-9.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">ThenX</p>
+                                        <p class="channel-tooltip-stats">7.56M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=ixmxOlcrlUc" target="_blank" class="video-title-link">
+                                <p class="video-title">The SECRET to Super Human STRENGTH</p>
+                            </a>
+                            <a href="https://www.youtube.com/c/OFFICIALTHENXSTUDIOS" target="_blank" class="channel-link">
+                                <p class="video-author">ThenX</p>
+                            </a>
+                            <p class="video-stats">20M views &#183; 3 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=R2vXbFp5C9o" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-10.webp">
+                        </a>                        
+                        <div class="video-time">7:53</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/user/businessinsider" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-10.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-10.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Business Insider</p>
+                                        <p class="channel-tooltip-stats">7.36M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=R2vXbFp5C9o" target="_blank" class="video-title-link">
+                                <p class="video-title">How The World's Largest Cruise Ship Makes 30,000 Meals Every Day</p>
+                            </a>
+                            <a href="https://www.youtube.com/user/businessinsider" target="_blank" class="channel-link">
+                                <p class="video-author">Business Insider</p>
+                            </a>                            
+                            <p class="video-stats">14M views &#183; 1 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=0nZuYyXET3s" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-11.webp">
+                        </a>                    
+                        <div class="video-time">4:10</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/c/Destinationtips" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-11.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-11.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">Destination Tips</p>
+                                        <p class="channel-tooltip-stats">279K subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=0nZuYyXET3s" target="_blank" class="video-title-link">
+                                <p class="video-title">Dubai's Crazy Underwater Train and Other Things #Only in Dubai</p>
+                            </a>
+                            <a href="https://www.youtube.com/c/Destinationtips" target="_blank" class="channel-link">
+                                <p class="video-author">Destination Tips</p>
+                            </a>                            
+                            <p class="video-stats">3M views &#183; 1 year ago</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-preview">
+                    <div class="thumbnail-row">
+                        <a href="https://www.youtube.com/watch?v=9iMGFqMmUFs" target="_blank" class="video-title-link">
+                            <img class="thumbnail" src="thumbnails/thumbnail-12.webp">
+                        </a>                        
+                        <div class="video-time">4:51</div>
+                    </div>
+                    <div class="video-info-grid">
+                        <div class="channel-picture">
+                            <div class="profile-picture-container">
+                                <a href="https://www.youtube.com/teded" target="_blank" class="channel-link">
+                                    <img class="profile-picture" src="channel-pictures/channel-12.jpeg">
+                                </a>
+                                <div class="channel-tooltip">
+                                    <img class="channel-tooltip-picture" src="channel-pictures/channel-12.jpeg">
+                                    <div class="channel-info-tooltip">
+                                        <p class="channel-tooltip-name">TED-Ed</p>
+                                        <p class="channel-tooltip-stats">18.1M subscribers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <a href="https://www.youtube.com/watch?v=9iMGFqMmUFs" target="_blank" class="video-title-link">
+                                <p class="video-title">What would happen if you didn’t drink water? - Mia Nacamulli</p>
+                            </a>                        
+                            <a href="https://www.youtube.com/teded" target="_blank" class="channel-link">
+                                <p class="video-author">TED-Ed</p>
+                            </a>                            
+                            <p class="video-stats">12M views &#183; 5 years ago</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>
