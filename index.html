@@ -3,544 +3,554 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lemon Shark — Media Hub</title>
+    <title>Lemon Shark — Interactive Hub</title>
     <style>
         :root {
-            /* DEEP SPACE & PLATFORM COLOR PALETTE */
-            --bg-dark-space: radial-gradient(circle at center, #0c1445 0%, #06091f 70%, #020308 100%);
-            --yt-dark-bg: #0f172a;
-            --panel-glass: rgba(15, 23, 42, 0.6);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-cyan: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.3);
-            --border-sky: rgba(59, 130, 246, 0.25);
-            
-            --google-red: #ef4444;
-            --google-blue: #3b82f6;
+            /* PASTEL YELLOW COLOUR PALETTE */
+            --bg-pastel-yellow: #fef9e7;
+            --panel-white: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --accent-lemon: #f4d03f;
+            --accent-glow: rgba(244, 208, 63, 0.4);
+            --border-light: #edf2f7;
+            --discord-light-panel: #f7fafc;
+            --tiktok-light-viewport: #edf2f7;
         }
 
         body, html {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: var(--bg-dark-space);
+            background-color: var(--bg-pastel-yellow);
             color: var(--text-main);
             height: 100%;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Ambient starlight glow backdrop pattern */
-        body::before {
-            content: "";
+        /* Top Auth Navbar Bar */
+        .top-navbar {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: 
-                radial-gradient(white, rgba(255,255,255,.15) 1.5px, transparent 35px),
-                radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 25px);
-            background-size: 550px 550px, 350px 350px;
-            background-position: 0 0, 40px 60px;
-            opacity: 0.3;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Global Header (Google/YouTube-Style Navbar) */
-        .global-header {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 64px;
-            background: rgba(15, 23, 42, 0.85);
-            border-bottom: 1px solid var(--border-sky);
+            top: 0; right: 0; left: 0;
+            height: 60px;
             display: flex;
+            justify-content: flex-end;
             align-items: center;
-            justify-content: space-between;
             padding: 0 24px;
             z-index: 100;
-            backdrop-filter: blur(12px);
-        }
-
-        .header-left .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            cursor: pointer;
-        }
-        .header-left .logo span { color: var(--accent-cyan); }
-
-        /* Integrated Central Google-Style Search Field */
-        .header-center {
-            flex-grow: 1;
-            max-width: 640px;
-            margin: 0 20px;
-        }
-        .search-bar-container {
-            display: flex;
-            background: rgba(2, 6, 17, 0.8);
-            border: 1px solid var(--border-sky);
-            border-radius: 40px;
-            overflow: hidden;
-            padding: 2px;
-        }
-        .search-bar-container input {
-            flex-grow: 1;
-            border: none;
-            background: transparent;
-            padding: 10px 20px;
-            color: var(--text-main);
-            font-size: 15px;
-            outline: none;
-        }
-        .search-btn {
-            background: rgba(30, 41, 59, 0.8);
-            border: none;
-            color: var(--text-main);
-            padding: 0 20px;
-            cursor: pointer;
-            border-left: 1px solid var(--border-sky);
-        }
-        .search-btn:hover { background: var(--accent-cyan); color: #000; }
-
-        .header-right {
-            display: flex;
-            align-items: center;
             gap: 12px;
         }
-
-        /* Button Blueprints */
         .btn {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid var(--accent-cyan);
+            padding: 9px 18px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            background: rgba(30, 41, 59, 0.7);
+            background: var(--panel-white);
             color: var(--text-main);
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
         }
         .btn:hover {
-            box-shadow: 0 0 12px var(--accent-glow);
+            background-color: #f7fafc;
+            border-color: #cbd5e0;
             transform: translateY(-1px);
         }
         .btn-primary {
-            background: linear-gradient(135deg, #1e40af 0%, #0369a1 100%);
-            border: 1px solid #7dd3fc;
+            background: var(--accent-lemon);
+            border: 1px solid #f1c40f;
+            color: #2d3748;
         }
-
-        /* Authentication Dropdown Modal Layouts */
-        .auth-overlay {
+        .btn-primary:hover {
+            background: #f1c40f;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        .user-status {
             display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(2, 6, 17, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(8px);
-        }
-        .auth-card {
-            background: #0f172a;
-            border: 1px solid var(--border-sky);
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            padding: 32px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            position: relative;
-        }
-        .auth-card h3 { margin-top: 0; font-size: 24px; color: var(--text-main); }
-        .auth-input-group { margin-bottom: 20px; }
-        .auth-input-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-        .auth-input-group input {
-            width: 100%; box-sizing: border-box; padding: 12px;
-            background: rgba(2, 6, 17, 0.6); border: 1px solid var(--border-sky);
-            border-radius: 8px; color: #fff; outline: none;
-        }
-        .auth-input-group input:focus { border-color: var(--accent-cyan); }
-        .close-auth {
-            position: absolute; top: 16px; right: 16px; background: transparent;
-            border: none; color: var(--text-muted); font-size: 18px; cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2f855a;
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            padding: 6px 16px;
+            border-radius: 20px;
         }
 
-        /* YouTube Platform Main Multi-View Panel Interface */
-        .main-container {
-            display: flex;
-            margin-top: 64px;
-            height: calc(100vh - 64px);
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Left-Hand Navigation Sidebar Drawer */
-        .sidebar-drawer {
-            width: 240px;
-            background: rgba(15, 23, 42, 0.4);
-            border-right: 1px solid var(--border-sky);
+        /* Search Dashboard Landing View */
+        .search-engine-view {
             display: flex;
             flex-direction: column;
-            padding: 12px;
-            box-sizing: border-box;
-            backdrop-filter: blur(8px);
-        }
-        .sidebar-item {
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-            margin-bottom: 4px;
-            display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 10;
+            background: var(--bg-pastel-yellow);
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
-        .sidebar-item:hover, .sidebar-item.active {
-            background: rgba(56, 189, 248, 0.1);
+        .logo {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+            letter-spacing: -1.5px;
             color: var(--text-main);
         }
-        .sidebar-divider {
-            height: 1px; background: var(--border-sky); margin: 12px 0;
+        .logo span { color: #f1c40f; }
+        .search-box-wrapper { width: 90%; max-width: 584px; }
+        .search-input-field {
+            width: 100%; box-sizing: border-box; padding: 14px 24px; font-size: 16px;
+            color: var(--text-main); background: var(--panel-white); border: 1px solid #dfe1e5;
+            border-radius: 24px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
         }
-        .sidebar-section-title {
-            font-size: 12px; font-weight: 700; color: var(--accent-cyan);
-            padding-left: 16px; text-transform: uppercase; margin-bottom: 8px;
-        }
-
-        /* Center Video Feed Workspace Grid Content Area */
-        .content-workspace {
-            flex-grow: 1;
-            padding: 24px;
-            overflow-y: auto;
-            background: rgba(2, 6, 17, 0.2);
+        .search-input-field:focus {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 0 3px var(--accent-glow);
+            border-color: var(--accent-lemon);
         }
 
-        /* YouTube Grid Layout Structure */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+        /* Platform Hybrid Workspace Layout Dashboard */
+        .platform-workspace {
+            display: none;
+            height: 100vh; width: 100vw;
+            position: absolute; top: 0; left: 0;
+            z-index: 5; opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        .video-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-sky);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .video-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            border-color: var(--accent-cyan);
-        }
-        .thumbnail-box {
-            width: 100%; aspect-ratio: 16/9; background: #020617;
-            position: relative; overflow: hidden;
-        }
-        .thumbnail-box img { width: 100%; height: 100%;             object-fit: cover; 
-        }
-        .video-duration {
-            position: absolute; bottom: 8px; right: 8px;
-            background: rgba(0,0,0,0.8); padding: 2px 6px; border-radius: 4px;
-            font-size: 11px; font-weight: 600;
-        }
-        .video-meta-info { padding: 16px; display: flex; gap: 12px; }
-        .channel-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: var(--accent-cyan); flex-shrink: 0;
-        }
-        .video-details h4 { margin: 0 0 6px 0; font-size: 14px; line-height: 1.4; color: var(--text-main); }
-        .video-details p { margin: 0; font-size: 12px; color: var(--text-muted); }
 
-        /* Channel Control Dashboard Overlay Wrapper */
-        .dashboard-view { display: none; }
-        .create-channel-box {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border-sky);
-            border-radius: 16px; padding: 24px; max-width: 500px; margin-bottom: 32px;
+        /* Discord Panel Sidebar */
+        .discord-panel {
+            width: 280px;
+            background-color: var(--discord-light-panel);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-light);
+            height: 100%;
+            z-index: 20;
+        }
+        .discord-header {
+            padding: 18px 16px;
+            font-weight: 700;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-main);
+            background: #fff;
+        }
+        .channel-directory {
+            list-style: none; padding: 10px 8px; margin: 0;
+            flex-grow: 1; overflow-y: auto;
+        }
+        .channel-node {
+            padding: 10px 12px; border-radius: 6px; cursor: pointer;
+            margin-bottom: 4px; font-size: 14px; color: var(--text-muted);
+            transition: all 0.2s ease; font-weight: 500;
+        }
+        .channel-node::before { content: "# "; font-weight: bold; }
+        .channel-node:hover { background-color: #edf2f7; color: var(--text-main); }
+        .channel-node.active { background-color: #fef08a; color: #854d0e; }
+        
+        .management-section {
+            padding: 12px; background: #fff; border-top: 1px solid var(--border-light);
+            display: none; flex-direction: column; gap: 8px;
+        }
+        .management-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* TikTok Module Viewport Panel */
+        .tiktok-panel {
+            flex-grow: 1; background-color: var(--panel-white);
+            display: flex; justify-content: center; align-items: center;
+            position: relative; height: 100%;
+        }
+        .video-viewport {
+            width: 100%; max-width: 440px; height: 85vh;
+            background: #000; border-radius: 16px;
+            overflow: hidden; position: relative;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .video-viewport video { width: 100%; height: 100%; object-fit: contain; }
+
+        /* TikTok Navigation Controls */
+        .feed-navigation-controls {
+            position: absolute; right: 30px;
+            display: flex; flex-direction: column; gap: 15px; z-index: 40;
+        }
+        .nav-circle-btn {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--panel-white); border: 1px solid var(--border-light);
+            color: var(--text-main); font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .nav-circle-btn:hover { background: var(--accent-lemon); border-color: #f1c40f; transform: scale(1.05); }
+
+        /* Modals and Overlays Management Blueprints */
+        .modal-overlay {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4); z-index: 1000;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-card {
+            background: #fff; border-radius: 16px;
+            width: 90%; max-width: 400px; padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .modal-card h3 { margin-top: 0; margin-bottom: 16px; font-size: 20px; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+        .input-group input, .input-group select {
+            width: 100%; box-sizing: border-box; padding: 10px 14px;
+            border: 1px solid #cbd5e0; border-radius: 8px; outline: none; font-size: 14px;
+        }
+        .input-group input:focus { border-color: #f1c40f; box-shadow: 0 0 0 3px var(--accent-glow); }
+        .modal-footer-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+        .close-modal-x {             position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted);
+        }
+
+        /* Dynamic Visual Color Dot Icon blueprint */
+        .channel-indicator-dot {
+            display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. GOOGLE/YOUTUBE LAYOUT NAVIGATION HEADER BAR -->
-    <header class="global-header">
-        <div class="header-left">
-            <div class="logo" onclick="switchViewSection('home')">Lemon <span>Shark</span></div>
-        </div>
-        <div class="header-center">
-            <div class="search-bar-container">
-                <input type="text" id="globalSearchInput" placeholder="Search creators, videos, channels...">
-                <button class="search-btn" onclick="executeSearchFilter()">🔍</button>
-            </div>
-        </div>
-        <div class="header-right">
-            <button id="navCreateBtn" class="btn" style="display:none;" onclick="switchViewSection('dashboard')">➕ Create</button>
-            <span id="userProfileTag" class="btn" style="display:none; border-color:#34d399;"></span>
-            <button id="loginModalTrigger" class="btn btn-primary" onclick="openAuthenticationModal()">Sign In</button>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <!-- Sidebar Navigation Drawer -->
-        <aside class="sidebar-drawer">
-            <div class="sidebar-item active" id="side-home" onclick="switchViewSection('home')">🏠 Home</div>
-            <div class="sidebar-item" id="side-subs" onclick="alert('Subscription index feeds connecting soon!')">🔔 Subscriptions</div>
-            <div class="sidebar-divider"></div>
-            <div class="sidebar-section-title">Channels Workspace</div>
-            <div class="sidebar-item" id="side-dash" onclick="switchViewSection('dashboard')">⚙️ Manage Channels</div>
-            <div id="dynamicChannelsMenu"></div>
-        </aside>
-
-        <!-- Main Video Grid Feed Workspace Area -->
-        <main class="content-workspace">
-            <div id="homeFeedsWorkspace" class="view-panel">
-                <h3 style="margin-top:0; letter-spacing: 0.5px; font-size:20px;">Recommended Space Feeds</h3>
-                <div class="video-grid" id="youtubeVideoGrid"></div>
-            </div>
-
-            <!-- YouTube Dashboard Operations Panel -->
-            <div id="creatorDashboardWorkspace" class="view-panel dashboard-view">
-                <h3 style="margin-top:0;">Creator Space Control Room</h3>
-                
-                <div class="create-channel-box">
-                    <h4 style="margin-top:0; color: var(--accent-cyan);">🚀 Provision New Content Channel</h4>
-                    <div class="auth-input-group">
-                        <label>Channel Identity Label Name</label>
-                        <input type="text" id="newChannelNameInput" placeholder="e.g. Orion Nebula Records">
-                    </div>
-                    <button class="btn btn-primary" onclick="createNewUserChannel()">Establish Channel Node</button>
-                </div>
-
-                <h3>Your Established Channel Networks</h3>
-                <div class="video-grid" id="userChannelsGrid">
-                    <p style="color:var(--text-muted); font-style:italic;">Sign in to unlock space network channel privileges.</p>
-                </div>
-            </div>
-        </main>
+    <!-- Upper Control Navbar -->
+    <div class="top-navbar" id="globalNav">
+        <span id="userBadge" class="user-status">🍋 Active Explorer</span>
+        <button id="authModalTriggerBtn" class="btn btn-primary" onclick="openModalView('authModal')">Sign In / Register</button>
     </div>
 
-    <!-- Multi-Mode Email Sign-Up Framework Modal Overlay -->
-    <div class="auth-overlay" id="authGatewayOverlay">
-        <div class="auth-card">
-            <button class="close-auth" onclick="closeAuthenticationModal()">✕</button>
-            <h3 id="authTitleLabel">Sign Into Lemon Shark</h3>
-            
-            <div class="auth-input-group">
-                <label>Email Address Path</label>
-                <input type="email" id="authEmailInput" placeholder="explorer@lemonshark.space">
+    <!-- Google Style Pure Search Dashboard View -->
+    <div class="search-engine-view" id="googleHomepage">
+        <div class="logo">Lemon <span>Shark</span></div>
+        <div class="search-box-wrapper">
+            <input type="text" class="search-input-field" id="mainSearchInput" placeholder="Search categories, tags, or servers..." onkeydown="if(event.key==='Enter') evaluateSearchQuery()">
+        </div>
+    </div>
+
+    <!-- Workspace View Panel System -->
+    <div class="platform-workspace" id="mainAppWorkspace">
+        
+        <!-- Discord Module Panel Sidebar -->
+        <div class="discord-panel">
+            <div class="discord-header">🍋 Lemon Shark Media</div>
+            <ul class="channel-directory" id="channelsListContainer">
+                <li class="channel-node active" id="node-all" onclick="filterDataFeedScope('all')">global-broadcast</li>
+            </ul>
+
+            <!-- Conditional Channel Creation Widget: Visible ONLY when Logged In with Email -->
+            <div class="management-section" id="channelManagementWidget">
+                <span class="management-title">Channel Node Configuration</span>
+                <button class="btn btn-primary" style="font-size:12px; padding:6px 12px;" onclick="openModalView('createChannelModal')">✨ Add Channel</button>
             </div>
-            <div class="auth-input-group">
+
+            <div class="management-section" id="videoManagementWidget">
+                <span class="management-title">Content Suite Controls</span>
+                <button class="btn btn-primary" style="font-size:12px; padding:6px 12px;" onclick="openModalView('addVideoModal')">🎬 Add Video</button>
+            </div>
+        </div>
+
+        <div class="tiktok-panel">
+            <div class="video-viewport">
+                <video id="liveVideoFrameworkPlayer" controls autoplay loop muted src="https://googleapis.com"></video>
+            </div>
+            <div class="feed-navigation-controls">
+                <button class="nav-circle-btn" onclick="stepMediaFeed('up')">▲</button>
+                <button class="nav-circle-btn" onclick="stepMediaFeed('down')">▼</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Mode Email Auth Modal Box -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <button class="close-modal-x" onclick="closeModalView('authModal')">✕</button>
+            <h3 id="authModalTitle">Sign Into Lemon Shark</h3>
+            <div class="input-group">
+                <label>Email Identity Token</label>
+                <input type="email" id="authEmailInput" placeholder="explorer@lemonshark.io">
+            </div>
+            <div class="input-group">
                 <label>Security Key Access Token</label>
                 <input type="password" id="authPasswordInput" placeholder="••••••••">
             </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:28px;">
-                <span id="authToggleHint" style="font-size:12px; color:var(--accent-cyan); cursor:pointer;" onclick="toggleAuthMethodMode()">Need an account? Sign Up</span>
-                <button class="btn btn-primary" id="authSubmitActionBtn" onclick="processAuthSubmission()">Enter Hub</button>
+            <div class="modal-footer-btns">
+                <span id="authToggleHint" style="font-size:12px; color:var(--text-muted); cursor:pointer; margin-right:auto; align-self:center;" onclick="toggleAuthInterfaceMode()">Need an account? Sign Up</span>
+                <button class="btn btn-primary" onclick="processEmailAuthentication()">Confirm Parameters</button>
             </div>
         </div>
     </div>
 
-    <!-- APPLICATION PLATFORM ARCHITECTURE ENGINE SCRIPT -->
+    <!-- Create and Edit Channel Configuration Modal Overlay Box -->
+    <div class="modal-overlay" id="createChannelModal">
+        <div class="modal-card">
+            <button class="close-modal-x" onclick="closeModalView('createChannelModal')">✕</button>
+            <h3 id="channelModalTitle">Provision Content Channel</h3>
+            <div class="input-group">
+                <label>Channel Identity Display Name</label>
+                <input type="text" id="channelNameInput" placeholder="e.g. Neon Horizon Cinematic">
+            </div>
+            <div class="input-group">
+                <label>Profile Brand Accent Theme</label>
+                <input type="color" id="channelColorInput" value="#f4d03f">
+            </div>
+            <div class="modal-footer-btns">
+                <button id="deleteChannelBtn" class="btn" style="background:#fed7d7; color:#9b2c2c; display:none;" onclick="processChannelDeletion()">Delete Node</button>
+                <button class="btn btn-primary" id="channelSubmitActionBtn" onclick="processChannelCreation()">Deploy Channel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Video Link Context Overlay Form Drawer -->
+    <div class="modal-overlay" id="addVideoModal">
+        <div class="modal-card">
+            <button class="close-modal-x" onclick="closeModalView('addVideoModal')">✕</button>
+            <h3>Sync Video Stream Node</h3>
+            <div class="input-group">
+                <label>Target Broadcast Destination Channel</label>
+                <select id="videoTargetChannelSelector"></select>
+            </div>
+            <div class="input-group">
+                <label>Stream Video Content URL Asset Link</label>
+                <input type="text" id="videoSourceUrlInput" placeholder="https://example.com">
+            </div>
+            <div class="modal-footer-btns">
+                <button class="btn btn-primary" onclick="processVideoAttachment()">Publish Stream</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // System Memory State Storage
-        let currentAuthMode = 'login';
-        let authenticatedUser = null;
-        
-        // Initial Default Database Media Array Collections 
-        const planetaryVideoDatabase = [
-            { id: 1, title: "Deep Dive: Navigating The Crab Nebula Cosmic Arrays", creator: "Orion Observatory", views: "340K views", age: "2 days ago", duration: "14:22", thumb: "https://unsplash.com" },
-            { id: 2, title: "How James Webb Fixed Chromatic Space Leak Variables", creator: "Stellar Labs", views: "1.2M views", age: "1 week ago", duration: "08:45", thumb: "https://unsplash.com" },
-            { id: 3, title: "Synthesizing Ambient Space Pulsar Sound Waves", creator: "Radio Telecoms", views: "89K views", age: "5 hours ago", duration: "45:10", thumb: "https://unsplash.com" }
+        // System Framework Memory Repositories Arrays
+        let activeAuthViewMode = 'login';
+        let authenticatedUserIdentity = null;
+        let selectedFeedScopeId = 'all';
+        let currentActiveStreamIndex = 0;
+        let selectedEditingChannelId = null;
+
+        // Custom Stream Collections Arrays Mapping Registry Structures
+        const globalMediaPipelineDatabase = [
+            { scope: 'all', src: 'https://googleapis.com' },
+            { scope: 'all', src: 'https://googleapis.com' },
+            { scope: 'all', src: 'https://googleapis.com' }
         ];
 
-        // User Custom Channel Configuration Mappings Dictionary Registry
-        let systemChannelsRegistry = {};
+        let userChannelsDictionary = {};
 
-        // Instantiate App Components on Window Finish Execution
-        window.addEventListener('DOMContentLoaded', () => {
-            renderMediaGridWorkspace(planetaryVideoDatabase);
-        });
+        // 1. Overlay Framework Layout Windows Controllers Modifiers
+        function openModalView(modalId) {
+            if (modalId === 'createChannelModal' && selectedEditingChannelId === null) {
+                document.getElementById('channelModalTitle').innerText = "Provision Content Channel";
+                document.getElementById('channelSubmitActionBtn').innerText = "Deploy Channel";
+                document.getElementById('deleteChannelBtn').style.display = "none";
+                document.getElementById('channelNameInput').value = "";
+                document.getElementById('channelColorInput').value = "#f4d03f";
+            }
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        function closeModalView(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'createChannelModal') selectedEditingChannelId = null;
+        }
 
-        // 1. Core Structural View Navigation Controllers Logic Multiplexing
-        function switchViewSection(targetPanelId) {
-            const homePanel = document.getElementById('homeFeedsWorkspace');
-            const dashPanel = document.getElementById('creatorDashboardWorkspace');
-            
-            document.getElementById('side-home').classList.remove('active');
-            document.getElementById('side-dash').classList.remove('active');
-
-            if (targetPanelId === 'home') {
-                homePanel.style.display = 'block';
-                dashPanel.style.display = 'none';
-                document.getElementById('side-home').classList.add('active');
-            } else if (targetPanelId === 'dashboard') {
-                homePanel.style.display = 'none';
-                dashPanel.style.display = 'block';
-                document.getElementById('side-dash').classList.add('active');
-                renderUserOwnedChannels();
+        // 2. Multi-Mode Email Identification Gateway Processors
+        function toggleAuthInterfaceMode() {
+            const title = document.getElementById('authModalTitle');
+            const hint = document.getElementById('authToggleHint');
+            if (activeAuthViewMode === 'login') {
+                activeAuthViewMode = 'signup';
+                title.innerText = "Register Space Account";
+                hint.innerText = "Already an Explorer? Log In";
+            } else {
+                activeAuthViewMode = 'login';
+                title.innerText = "Sign Into Lemon Shark";
+                hint.innerText = "Need an account? Sign Up";
             }
         }
 
-        // 2. Grid UI Document Object Model Node Injector
-        function renderMediaGridWorkspace(dataset) {
-            const gridContainer = document.getElementById('youtubeVideoGrid');
-            gridContainer.innerHTML = '';
+        function processEmailAuthentication() {
+            const email = document.getElementById('authEmailInput').value.trim();
+            const pass = document.getElementById('authPasswordInput').value.trim();
 
-            if (dataset.length === 0) {
-                gridContainer.innerHTML = `<p style="color:var(--text-muted); padding-left:16px;">No cosmic records match your parameters query.</p>`;
+            if (!email.includes('@') || pass.length < 4) {
+                alert("Security handshake failed: Require valid parameter structural sequences.");
                 return;
             }
 
-            dataset.forEach(item => {
-                gridContainer.innerHTML += `
-                    <div class="video-card" onclick="alert('Buffering stream feed: ${item.title}')">
-                        <div class="thumbnail-box">
-                            <img src="${item.thumb}" alt="Space Content">
-                            <div class="video-duration">${item.duration}</div>
-                        </div>
-                        <div class="video-meta-info">
-                            <div class="channel-avatar"></div>
-                            <div class="video-details">
-                                <h4>${item.title}</h4>
-                                <p>${item.creator}</p>
-                                <p>${item.views} • ${item.age}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+            authenticatedUserIdentity = email;
+            
+            // Sync Interface Visibility Blocks to mirror operational hierarchy rules state transformations
+            document.getElementById('authModalTriggerBtn').style.display = 'none';
+            const badge = document.getElementById('userBadge');
+            badge.style.display = 'inline-block';
+            badge.innerText = `🍋 ${email.split('@')[0].toUpperCase()}`;
+            
+            // UNLOCK CHANNEL PRIVILEGES ONLY WHEN LOGGED IN
+            document.getElementById('channelManagementWidget').style.display = 'flex';
+
+            closeModalView('authModal');
+            alert("Handshake parameters confirmed! Identity locked securely to session node memory grid.");
         }
 
-        // 3. Search Bar Filter Parser
-        function executeSearchFilter() {
-            const queryToken = document.getElementById('globalSearchInput').value.toLowerCase().trim();
-            const matchedFilterList = planetaryVideoDatabase.filter(video => 
-                video.title.toLowerCase().includes(queryToken) || 
-                video.creator.toLowerCase().includes(queryToken)
-            );
-            switchViewSection('home');
-            renderMediaGridWorkspace(matchedFilterList);
-        }
+        // 3. Search Interception Redirection Logic Handlers
+        function evaluateSearchQuery() {
+            const query = document.getElementById('mainSearchInput').value.trim();
+            if (query === '') return;
 
-        // 4. Multi-State Email Identity Handlers
-        function openAuthenticationModal() {
-            document.getElementById('authGatewayOverlay').style.display = 'flex';
-        }
-        function closeAuthenticationModal() {
-            document.getElementById('authGatewayOverlay').style.display = 'none';
-        }
+            const landingView = document.getElementById('googleHomepage');
+    const appWorkspaceView = document.getElementById('mainAppWorkspace');
+    landingView.style.opacity = '0';
+    setTimeout(() => {
+        landingView.style.display = 'none';
+        appWorkspaceView.style.display = 'flex';
+        setTimeout(() => { appWorkspaceView.style.opacity = '1'; }, 50);
+    }, 400);
+}
 
-        function toggleAuthMethodMode() {
-    const labelTitle = document.getElementById('authTitleLabel');
-    const submitBtn = document.getElementById('authSubmitActionBtn');
-    const hintToggle = document.getElementById('authToggleHint');
-    
-    if (currentAuthMode === 'login') {
-        currentAuthMode = 'signup';
-        labelTitle.innerText = "Register Space Account";
-        submitBtn.innerText = "Create Identity";
-        hintToggle.innerText = "Already an Explorer? Log In";
+// 4. Custom Channel Suite Engine Configuration Mechanics
+function processChannelCreation() {
+    const name = document.getElementById('channelNameInput').value.trim();
+    const color = document.getElementById('channelColorInput').value;
+
+    if (!name) {
+        alert("Channel namespaces require explicit string character assignments.");
+        return;
+    }
+
+    if (selectedEditingChannelId !== null) {
+        // EDIT EXISTING CHANNEL NAME AND PROFILE COLOR
+        userChannelsDictionary[selectedEditingChannelId].name = name;
+        userChannelsDictionary[selectedEditingChannelId].color = color;
+        alert("Channel modification matrices locked into database tree successfully.");
     } else {
-        currentAuthMode = 'login';
-        labelTitle.innerText = "Sign Into Lemon Shark";
-        submitBtn.innerText = "Enter Hub";
-        hintToggle.innerText = "Need an account? Sign Up";
+        // PROVISION NEW CHANNEL NODE
+        const channelId = 'chan-' + Date.now();
+        userChannelsDictionary[channelId] = { name: name, color: color };
+    }
+
+    closeModalView('createChannelModal');
+    rebuildInterfaceChannelsDirectory();
+}
+
+function triggerChannelEditorMode(id) {
+    selectedEditingChannelId = id;
+    document.getElementById('channelModalTitle').innerText = "Edit Channel Parameters";
+    document.getElementById('channelSubmitActionBtn').innerText = "Save Changes";
+    document.getElementById('deleteChannelBtn').style.display = "inline-block";
+    
+    document.getElementById('channelNameInput').value = userChannelsDictionary[id].name;
+    document.getElementById('channelColorInput').value = userChannelsDictionary[id].color;
+    openModalView('createChannelModal');
+}
+
+function processChannelDeletion() {
+    if (!selectedEditingChannelId) return;
+    
+    if (confirm("Are you sure you want to completely erase this channel node pipeline configuration?")) {
+        delete userChannelsDictionary[selectedEditingChannelId];
+        closeModalView('createChannelModal');
+        filterDataFeedScope('all');
+        rebuildInterfaceChannelsDirectory();
     }
 }
 
-function processAuthSubmission() {
-    const targetEmail = document.getElementById('authEmailInput').value.trim();
-    const targetPassword = document.getElementById('authPasswordInput').value.trim();
+function rebuildInterfaceChannelsDirectory() {
+    const listContainer = document.getElementById('channelsListContainer');
+    const selector = document.getElementById('videoTargetChannelSelector');
     
-    if (!targetEmail || !targetPassword) {
-        alert("Authentication paths require valid character assignments.");
-        return;
+    // Reset node indices blocks layout blueprints structures
+    listContainer.innerHTML = `<li class="channel-node ${selectedFeedScopeId === 'all' ? 'active' : ''}" id="node-all" onclick="filterDataFeedScope('all')">global-broadcast</li>`;
+    selector.innerHTML = '';
+
+    let channelCount = 0;
+
+    for (const [id, config] of Object.entries(userChannelsDictionary)) {
+        channelCount++;
+        
+        // Append interactive sidebar row element containing edit access handles keys
+        listContainer.innerHTML += `
+            <li class="channel-node ${selectedFeedScopeId === id ? 'active' : ''}" id="node-${id}" onclick="filterDataFeedScope('${id}')" style="display:flex; align-items:center; justify-content:space-between;">
+                <span><span class="channel-indicator-dot" style="background:${config.color}"></span>${config.name}</span>
+                <button onclick="event.stopPropagation(); triggerChannelEditorMode('${id}')" style="background:transparent; border:none; cursor:pointer; font-size:11px;">✏️</button>
+            </li>`;
+
+        // Sync custom dropdown values indices mappings arrays lists updates elements
+        selector.innerHTML += `<option value="${id}">${config.name}</option>`;
     }
-    
-    authenticatedUser = targetEmail;
-    if (!(authenticatedUser in systemChannelsRegistry)) {
-        systemChannelsRegistry[authenticatedUser] = [];
-    }
-    
-    document.getElementById('loginModalTrigger').style.display = 'none';
-    document.getElementById('navCreateBtn').style.display = 'inline-block';
-    
-    const profileDisplay = document.getElementById('userProfileTag');
-    profileDisplay.style.display = 'inline-block';
-    profileDisplay.innerText = `🛸 ${targetEmail.split('@')[0].toUpperCase()}`;
-    
-    closeAuthenticationModal();
-    renderUserOwnedChannels();
-    rebuildDynamicSidebarMenu();
-    alert("Authenticated identity parameters locked safely to system configuration array node!");
+
+    // UNLOCK VIDEO ADDITIONS CONTROLS PRIVILEGES ONLY IF A USER OWNS AT LEAST ONE CHANNEL NODE
+    const videoWidget = document.getElementById('videoManagementWidget');
+    videoWidget.style.display = channelCount > 0 ? 'flex' : 'none';
 }
 
-// 5. Creator Suite Structural Channel Generator Routing
-function createNewUserChannel() {
-    if (!authenticatedUser) {
-        alert("System network authentication session required to provision channels.");
-        return;
-    }
-    
-    const requestedChannelTitle = document.getElementById('newChannelNameInput').value.trim();
-    if (!requestedChannelTitle) {
-        alert("Channels must contain structural identifiers naming assignments rules.");
-        return;
-    }
-    
-    systemChannelsRegistry[authenticatedUser].push({
-        name: requestedChannelTitle,
-        subscribers: "0 Subscribers",
-        networkHub: "Active Station"
-    });
-    
-    document.getElementById('newChannelNameInput').value = '';
-    renderUserOwnedChannels();
-    rebuildDynamicSidebarMenu();
-    alert(`Channel target workspace context established cleanly: [${requestedChannelTitle}]`);
+// 5. Native Media Player Stream Control Execution Routing Loops
+function filterDataFeedScope(scopeId) {
+    selectedFeedScopeId = scopeId;
+    currentActiveStreamIndex = 0;
+
+    document.querySelectorAll('.channel-node').forEach(node => node.classList.remove('active'));
+    const targetNode = document.getElementById(`node-${scopeId}`);
+    if (targetNode) targetNode.classList.add('active');
+
+    syncFrameworkPlayerSourceAsset();
 }
 
-function renderUserOwnedChannels() {
-    const gridDashboard = document.getElementById('userChannelsGrid');
-    
-    if (!authenticatedUser) {
-        gridDashboard.innerHTML = `<p style="color:var(--text-muted); font-style:italic;">Sign in using your Email Profile to map cosmic channels workspace.</p>`;
+function processVideoAttachment() {
+    const targetChanId = document.getElementById('videoTargetChannelSelector').value;
+    const linkAssetUrl = document.getElementById('videoSourceUrlInput').value.trim();
+
+    if (!linkAssetUrl.startsWith('http')) {
+        alert("Target video properties links string must utilize explicit web URL structure paths.");
         return;
     }
+
+    // Lock custom content element securely onto system database list array allocations
+    globalMediaPipelineDatabase.push({ scope: targetChanId, src: linkAssetUrl });
     
-    const currentScopeChannels = systemChannelsRegistry[authenticatedUser] || [];
-    gridDashboard.innerHTML = '';
+    document.getElementById('videoSourceUrlInput').value = '';
+    closeModalView('addVideoModal');
     
-    if (currentScopeChannels.length === 0) {
-        gridDashboard.innerHTML = `<p style="color:var(--text-muted);">You have not provisioned any studio creator channels networks nodes yet.</p>`;
-        return;
-    }
-    
-    currentScopeChannels.forEach(chan => {
-        gridDashboard.innerHTML += `
-            <div class="video-card" style="padding:20px; text-align:center;" onclick="alert('Opening dashboard node pipeline for system network: ${chan.name}')">
-                <div class="channel-avatar" style="margin: 0 auto 12px auto; width:64px; height:64px; background:linear-gradient(45deg, #0284c7, #38bdf8);"></div>
-                <h4 style="margin:0 0 4px 0;">${chan.name}</h4>
-                <p style="margin:0; font-size:12px; color:var(--text-muted);">${chan.subscribers} • ${chan.networkHub}</p>
-            </div>`;
-    });
+    filterDataFeedScope(targetChanId);
+    alert("Cosmic video content attached and processed successfully!");
 }
 
-function rebuildDynamicSidebarMenu() {
-    const dynamicDrawerList = document.getElementById('dynamicChannelsMenu');
-    dynamicDrawerList.innerHTML = '';
-    
-    if (!authenticatedUser) return;
-    const operationalList = systemChannelsRegistry[authenticatedUser] || [];
-    
-    operationalList.forEach(chan => {
-        dynamicDrawerList.innerHTML += `
-            <div class="sidebar-item" style="padding-left:24px; font-size:13px; color:#bae6fd;" onclick="alert('Opening workspace connection pipeline matching: ${chan.name}')">
-                📺 ${chan.name}
-            </div>`;
-    });
+function stepMediaFeed(direction) {
+    const activeSubsetList = globalMediaPipelineDatabase.filter(video => 
+        selectedFeedScopeId === 'all' || video.scope === selectedFeedScopeId
+    );
+
+    if (activeSubsetList.length === 0) return;
+
+    if (direction === 'up') {
+        currentActiveStreamIndex = (currentActiveStreamIndex - 1 + activeSubsetList.length) % activeSubsetList.length;
+    } else {
+        currentActiveStreamIndex = (currentActiveStreamIndex + 1) % activeSubsetList.length;
+    }
+
+    syncFrameworkPlayerSourceAsset();
+}
+
+function syncFrameworkPlayerSourceAsset() {
+    const player = document.getElementById('liveVideoFrameworkPlayer');
+    const activeSubsetList = globalMediaPipelineDatabase.filter(video => 
+        selectedFeedScopeId === 'all' || video.scope === selectedFeedScopeId
+    );
+
+    if (activeSubsetList.length > 0 && activeSubsetList[currentActiveStreamIndex]) {
+        player.src = activeSubsetList[currentActiveStreamIndex].src;
+        player.style.display = "block";
+        player.play().catch(e => console.log("Stream autoplay state verification loop interrupted safely."));
+    } else {
+        player.pause();
+        player.style.display = "none";
+        alert("This custom stream channel segment does not contain any assigned video content links yet.");
+    }
 }
