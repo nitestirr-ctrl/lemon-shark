@@ -3,25 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lemon Shark</title>
+    <title>Lemon Shark — Midnight Sky</title>
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-color: #202124;
-            --accent-yellow: #f4d03f;
-            --border-color: #dfe1e5;
-            --discord-dark: #2f3136;
-            --tiktok-black: #010101;
+            /* MIDNIGHT SKY COLOUR PALETTE */
+            --bg-dark-space: radial-gradient(circle at center, #0c1445 0%, #06091f 70%, #020308 100%);
+            --panel-glass: rgba(12, 20, 69, 0.45);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-cyan: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --border-sky: rgba(59, 130, 246, 0.25);
+            
+            --discord-dark: #0f172a;
+            --tiktok-black: #020617;
         }
 
         body, html {
             font-family: 'Segoe UI', Roboto, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: var(--bg-dark-space);
+            color: var(--text-main);
             height: 100%;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient starlight glow backdrop pattern */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.15) 1.5px, transparent 35px),
+                radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 25px);
+            background-size: 550px 550px, 350px 350px;
+            background-position: 0 0, 40px 60px;
+            opacity: 0.35;
+            z-index: 1;
+            pointer-events: none;
         }
 
         /* Top Auth Bar */
@@ -40,34 +61,43 @@
         }
         .btn {
             padding: 9px 18px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border: 1px solid var(--accent-cyan);
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            background: #fff;
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(4px);
         }
         .btn:hover {
-            background-color: #f8f9fa;
+            background-color: rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-1px);
         }
         .btn-primary {
-            background-color: var(--accent-yellow);
-            border: 1px solid #f1c40f;
-            color: #000;
+            background: linear-gradient(135deg, #1e40af 0%, #0369a1 100%);
+            border: 1px solid #7dd3fc;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
         .btn-primary:hover {
-            background-color: #f1c40f;
+            background: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
         .user-status {
             display: none;
             font-size: 14px;
             font-weight: 500;
-            background: #f1f3f4;
-            padding: 6px 12px;
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 6px 16px;
             border-radius: 16px;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.4);
         }
 
-        /* Google Interface */
+        /* Google Interface Viewport */
         .search-engine-view {
             display: flex;
             flex-direction: column;
@@ -79,16 +109,23 @@
             top: 0;
             left: 0;
             z-index: 10;
-            background: #fff;
+            background: transparent;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
         .logo {
             font-size: 5rem;
             font-weight: 700;
             margin-bottom: 28px;
             letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 40%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.25));
         }
         .logo span {
-            color: #f1c40f;
+            color: #38bdf8;
+            -webkit-text-fill-color: initial;
+            text-shadow: 0 0 20px var(--accent-glow);
         }
         .search-box-wrapper {
             width: 90%;
@@ -99,16 +136,22 @@
             box-sizing: border-box;
             padding: 14px 24px;
             font-size: 16px;
-            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-sky);
             border-radius: 24px;
             outline: none;
-            box-shadow: 0 1px 6px rgba(32,33,36,0.18);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
         }
         .search-input-field:focus {
-            box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+            box-shadow: 0 0 25px var(--accent-glow);
+            border-color: #7dd3fc;
+            background: rgba(15, 23, 42, 0.8);
         }
 
-        /* Platform Hybrid Layout */
+        /* Platform Hybrid Workspace Layout */
         .platform-workspace {
             display: none;
             height: 100vh;
@@ -117,24 +160,30 @@
             top: 0;
             left: 0;
             z-index: 5;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         /* Discord Module */
         .discord-panel {
             width: 260px;
             background-color: var(--discord-dark);
-            color: #e3e5e8;
+            color: #e2e8f0;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid #202225;
+            border-right: 1px solid var(--border-sky);
             height: 100%;
+            z-index: 20;
+            backdrop-filter: blur(10px);
         }
         .discord-header {
-            padding: 16px;
+            padding: 18px 16px;
             font-weight: 700;
             font-size: 16px;
-            border-bottom: 1px solid #202225;
+            border-bottom: 1px solid var(--border-sky);
             color: #fff;
+            letter-spacing: 0.5px;
+            background: rgba(30, 41, 59, 0.3);
         }
         .channel-directory {
             list-style: none;
@@ -144,24 +193,34 @@
             overflow-y: auto;
         }
         .channel-node {
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             font-size: 15px;
-            color: #96989d;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
         }
         .channel-node::before {
-            content: "# ";
-            font-weight: bold;
+            content: "🌌 ";
+            font-size: 12px;
         }
-        .channel-node:hover, .channel-node.active {
-            background-color: #393c43;
+        .channel-node:hover {
+            background-color: rgba(56, 189, 248, 0.1);
             color: #fff;
+        }
+        .channel-node.active {
+            background: linear-gradient(90deg, rgba(3, 105, 161, 0.4) 0%, rgba(56, 189, 248, 0.1) 100%);
+            border-left: 3px solid var(--accent-cyan);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
         }
         .upload-action-footer {
             padding: 16px;
-            background: #292b2f;
+            background: rgba(15, 23, 42, 0.8);
+            border-top: 1px solid var(--border-sky);
+            display: flex;
+            justify-content: center;
         }
 
         /* TikTok Module */
@@ -178,13 +237,15 @@
             width: 100%;
             max-width: 440px;
             height: 88vh;
-            background: #000;
-            border-radius: 8px;
+            background: #020617;
+            border-radius: 16px;
             overflow: hidden;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            border: 1px solid var(--border-sky);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(56, 189, 248, 0.05);
         }
         .video-viewport video, .video-viewport img {
             width: 100%;
@@ -192,30 +253,33 @@
             object-fit: contain;
         }
 
-        /* Safe Mode Filter Toggle */
+        /* Safe Mode Filter Toggle Overlay */
         .safety-filter-box {
             position: absolute;
             bottom: 24px;
             right: 24px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px 16px;
-            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.85);
+            padding: 12px 18px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-sky);
             font-size: 14px;
             font-weight: 600;
-            color: #000;
+            color: var(--text-main);
             z-index: 50;
+            backdrop-filter: blur(8px);
         }
         .switch-input {
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: var(--accent-cyan);
         }
 
-        /* TikTok Navigation Arrows */
+        /* TikTok Navigation Controls */
         .feed-navigation-controls {
             position: absolute;
             right: 30px;
@@ -226,36 +290,98 @@
             z-index: 40;
         }
         .nav-circle-btn {
-            width: 45px;
-            height: 45px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: white;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-sky);
+            color: var(--text-main);
             font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
         }
         .nav-circle-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.05);
+            object-fit: contain;
+        }
+
+        /* Safe Mode Filter Toggle Overlay */
+        .safety-filter-box {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.85);
+            padding: 12px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-sky);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+        .switch-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-cyan);
+        }
+
+        /* TikTok Navigation Controls */
+        .feed-navigation-controls {
+            position: absolute;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+            z-index: 40;
+        }
+        .nav-circle-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-sky);
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        .nav-circle-btn:hover {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.05);
         }
     </style>
-
-    <!-- FIXED Script library loading target parameter for Cloudinary Media Services -->
-    <script src="https://cloudinary.com" type="text/javascript"></script>
+    <script src="https://cloudflare.com" type="text/javascript"></script>
 </head>
 <body>
 
-    <!-- Auth UI Elements -->
+    <!-- Auth Elements -->
     <div class="top-navbar" id="globalNav">
-        <span id="userBadge" class="user-status"></span>
+        <span id="userBadge" class="user-status">🌌 Explorer Mode</span>
         <button id="loginButton" class="btn" onclick="executeAuthAction('login')">Log In</button>
         <button id="signupButton" class="btn btn-primary" onclick="executeAuthAction('signup')">Sign Up</button>
     </div>
 
-    <!-- Google Style Search Dashboard -->
+    <!-- Google Style Dashboard Interface -->
     <div class="search-engine-view" id="googleHomepage">
         <div class="logo">Lemon <span>Shark</span></div>
         <div class="search-box-wrapper">
@@ -263,10 +389,10 @@
         </div>
     </div>
 
-    <!-- Live Workspace UI -->
+    <!-- Hybrid Application Platform Workspace -->
     <div class="platform-workspace" id="mainAppWorkspace">
         
-        <!-- Discord Sidebar -->
+        <!-- Discord Module Panel Sidebar -->
         <div class="discord-panel">
             <div class="discord-header">🍋 Lemon Shark Channels</div>
             <ul class="channel-directory">
@@ -275,214 +401,140 @@
                 <li class="channel-node" id="chan-photos" onclick="filterChannelScope('photos')">photo-dump</li>
             </ul>
             <div class="upload-action-footer">
-                <button class="btn btn-primary" style="width: 100%;" onclick="launchCloudinaryUpload()">+ Upload Media</button>
+                <button class="btn btn-primary" style="width: 100%;" onclick="mockUploadAsset()">✨ Sync Cosmic Asset</button>
             </div>
         </div>
 
-        <!-- TikTok Video Stream -->
+        <!-- TikTok Content Stream Viewport -->
         <div class="tiktok-panel">
-            
-            <!-- Safe Mode Checkbox -->
-            <div class="safety-filter-box">
-                <label for="safetyFilterCheckbox">Safe Mode (Filter 18+)</label>
-                <input type="checkbox" id="safetyFilterCheckbox" class="switch-input" checked onchange="toggleContentFilter()">
+            <div class="video-viewport" id="mediaPlayerContainer">
+                <img id="activeMediaAsset" src="https://unsplash.com" alt="Cosmic Background">
             </div>
 
-            <!-- Main Media Element -->
-            <div class="video-viewport" id="mediaViewerDisplay">
-                <div style="color: #fff; text-align: center; padding: 20px;">Initializing streams...</div>
-            </div>
-
-            <!-- Up/Down Scrollers -->
+            <!-- Feed Up/Down Nav Controls -->
             <div class="feed-navigation-controls">
-                <button class="nav-circle-btn" onclick="navigateCarousel(-1)">▲</button>
-                <button class="nav-circle-btn" onclick="navigateCarousel(1)">▼</button>
+                <button class="nav-circle-btn" onclick="stepMediaFeed('up')">▲</button>
+                <button class="nav-circle-btn" onclick="stepMediaFeed('down')">▼</button>
             </div>
 
+            <!-- Ambient Overlay Nebula Switch Filter -->
+            <div class="safety-filter-box">
+                <label for="safetyFilterCheckbox">Nebula Safe Filter</label>
+                <input type="checkbox" id="safetyFilterCheckbox" class="switch-input" checked onchange="toggleSafetyFilter()">
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        // Import Firebase straight from the web (Perfect for GitHub Pages)
-        import { initializeApp } from "https://gstatic.com";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://gstatic.com";
+    <!-- SYSTEM CORE LOGIC APPLICATION SCRIPT -->
+    <script>
+        // System Application State Variables
+        let currentFeedScope = 'all';
+        let activeFeedIndex = 0;
+        let userAuthenticated = false;
 
-        const firebaseConfig = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseAuth = getAuth(firebaseApp);
-const firestoreDatabase = getFirestore(firebaseApp);
-
-let activeUserToken = null;
-let databaseRecordCache = [];
-let filteredDataset = [];
-let currentFeedPointerIndex = 0;
-let safeModePolicyActive = true;
-let selectedChannelCategory = 'all';
-
-// Listen for log-ins/signups state change persistence
-onAuthStateChanged(firebaseAuth, (userInstance) => {
-    if (userInstance) {
-        activeUserToken = userInstance;
-        document.getElementById('userBadge').innerText = `👤 ${userInstance.email}`;
-        document.getElementById('userBadge').style.color = '#fff';
-        document.getElementById('userBadge').style.display = 'inline-block';
-        document.getElementById('loginButton').style.display = 'none';
-        document.getElementById('signupButton').style.display = 'none';
-    }
-});
-
-// Prompt window handler authentication systems
-window.executeAuthAction = async function(mode) {
-    const userEmail = prompt(`[Lemon Shark Tool] Enter registration email profile:`);
-    const userPassword = prompt(`[Lemon Shark Tool] Enter security password code:`);
-    
-    if (!userEmail || !userPassword) return;
-
-    try {
-        if (mode === 'signup') {
-            await createUserWithEmailAndPassword(firebaseAuth, userEmail, userPassword);
-            alert("Account registration established successfully!");
-        } else {
-            await signInWithEmailAndPassword(firebaseAuth, userEmail, userPassword);
-            alert("System log-in sequence verified!");
-        }
-        window.displayAppWorkspace();
-    } catch (error) {
-        alert(`Authentication Fault Exception: ${error.message}`);
-    }
-};
-
-window.evaluateSearchQuery = function() {
-    window.displayAppWorkspace();
-};
-
-// Turn off search landing screen and show main application layout interface
-window.displayAppWorkspace = async function() {
-    document.getElementById('googleHomepage').style.display = 'none';
-    document.getElementById('mainAppWorkspace').style.display = 'flex';
-    document.getElementById('globalNav').style.background = '#2f3136';
-    await syncSystemMediaDatabase();
-};
-
-// Fetch user records storage links array list sequence
-async function syncSystemMediaDatabase() {
-    try {
-        const targetCollectionRef = collection(firestoreDatabase, "posts");
-        const prioritizedQuery = query(targetCollectionRef, orderBy("uploadedAt", "desc"));
-        const returnedSnapshot = await getDocs(prioritizedQuery);
-        
-        databaseRecordCache = [];
-        returnedSnapshot.forEach((documentNode) => {
-            databaseRecordCache.push(documentNode.data());
-        });
-        window.processAndRenderFeedLayers();
-    } catch(e) {
-        // Default standalone local loop template simulation if storage backend node isn't initialized yet
-        databaseRecordCache = [{
-            url: "https://mixkit.co",
-            mediaType: "video",
-            isNSFW: false,
-            channelScope: "videos"
-        }];
-        window.processAndRenderFeedLayers();
-    }
-}
-
-// Processing layer filters algorithm
-window.processAndRenderFeedLayers = function() {
-    filteredDataset = databaseRecordCache.filter(item => {
-        if (selectedChannelCategory === 'all') return true;
-        if (selectedChannelCategory === 'videos') return item.mediaType === 'video';
-        if (selectedChannelCategory === 'photos') return item.mediaType === 'image';
-        return true;
-    });
-
-    if (safeModePolicyActive) {
-        filteredDataset = filteredDataset.filter(item => item.isNSFW === false);
-    }
-
-    currentFeedPointerIndex = 0;
-    window.renderTargetFeedElement();
-};
-
-// Render runtime node layout wrapper elements inside player display panel
-window.renderTargetFeedElement = function() {
-    const renderTargetNode = document.getElementById('mediaViewerDisplay');
-    if (filteredDataset.length === 0) {
-        renderTargetNode.innerHTML = `<div style="color:#8e9297; font-weight: 500;">No matching media posts exist matching this criteria pipeline filter.</div>`;
-        return;
-    }
-
-    const activeMediaRecord = filteredDataset[currentFeedPointerIndex];
-    if (activeMediaRecord.mediaType === 'video') {
-        renderTargetNode.innerHTML = `<video src="${activeMediaRecord.url}" controls autoplay loop></video>`;
-    } else {
-        renderTargetNode.innerHTML = `<img src="${activeMediaRecord.url}" alt="Lemon Shark Feed Image Node" />`;
-    }
-};
-
-// Stream scroll index tracker positioning
-window.navigateCarousel = function(directionMagnitude) {
-    if (filteredDataset.length === 0) return;
-    currentFeedPointerIndex += directionMagnitude;
-
-    if (currentFeedPointerIndex < 0) currentFeedPointerIndex = 0;
-    if (currentFeedPointerIndex >= filteredDataset.length) currentFeedPointerIndex = filteredDataset.length - 1;
-
-    window.renderTargetFeedElement();
-};
-
-window.filterChannelScope = function(channelIdentity) {
-    document.querySelectorAll('.channel-node').forEach(el => el.classList.remove('active'));
-    document.getElementById(`chan-${channelIdentity}`).classList.add('active');
-    selectedChannelCategory = channelIdentity;
-    window.processAndRenderFeedLayers();
-};
-
-window.toggleContentFilter = function() {
-    safeModePolicyActive = document.getElementById('safetyFilterCheckbox').checked;
-    window.processAndRenderFeedLayers();
-};
-
-// Launcher method mapping directly linking browser window to Cloudinary widget scripts 
-window.launchCloudinaryUpload = function() {
-    if (!activeUserToken) {
-        alert("Action Forbidden: Session token key required. Register or log in to clear the upload security gates.");
-        return;
-    }
-
-    cloudinary.openUploadWidget({
-        cloudName: 'YOUR_CLOUDINARY_CLOUD_NAME', 
-        uploadPreset: 'YOUR_UNSIGNED_UPLOAD_PRESET',
-        sources: ['local', 'url'],
-        multiple: false
-    }, async (err, result) => {
-        if (!err && result && result.event === "success") {
-            const is18Plus = confirm("Does this visual submission item present 18+ adult material context?");
-            const fileInfo = result.info;
-
-                    try {
-                        await addDoc(collection(firestoreDatabase, "posts"), {
-                            url: fileInfo.secure_url,
-                            mediaType: fileInfo.resource_type, // "video" or "image"
-                            isNSFW: is18Plus,
-                            ownerAccount: activeUserToken.email,
-                            uploadedAt: new Date().toISOString()
-                        });
-                        alert("Asset successfully saved directly down into Lemon Shark live database registries.");
-                        await syncSystemMediaDatabase();
-                    } catch(error) {
-                        alert(`Database Write Rejection System Exception: ${error.message}`);
-                    }
-                }
-            });
+        // Space Theme Mock Media Library Data Source 
+        const mediaLibrary = {
+            all: [
+                { type: 'image', url: 'https://unsplash.com' },
+                { type: 'image', url: 'https://unsplash.com' },
+                { type: 'image', url: 'https://unsplash.com' }
+            ],
+            videos: [
+                { type: 'image', url: 'https://unsplash.com' }
+            ],
+            photos: [
+                { type: 'image', url: 'https://unsplash.com' },
+                { type: 'image', url: 'https://unsplash.com' }
+            ]
         };
+
+        // 1. Interactive Button Logic: User Login State Switcher
+        function executeAuthAction(mode) {
+            const loginBtn = document.getElementById('loginButton');
+            const signupBtn = document.getElementById('signupButton');
+            const userBadge = document.getElementById('userBadge');
+
+            if (!userAuthenticated) {
+                userAuthenticated = true;
+                loginBtn.style.display = 'none';
+                signupBtn.innerText = 'Log Out';
+                signupBtn.classList.remove('btn-primary');
+                userBadge.style.display = 'inline-block';
+                userBadge.innerText = mode === 'login' ? '🌌 Welcome Back, Explorer!' : '✨ Registered Explorer';
+            } else {
+                userAuthenticated = false;
+                loginBtn.style.display = 'inline-block';
+                signupBtn.innerText = 'Sign Up';
+                signupBtn.classList.add('btn-primary');
+                userBadge.style.display = 'none';
+            }
+        }
+
+        // 2. Search Logic: Animated Fade Transition out of Landing View into Main Workspace
+        function evaluateSearchQuery() {
+            const query = document.getElementById('mainSearchInput').value.trim();
+            if (query === '') return;
+
+            const homeView = document.getElementById('googleHomepage');
+            const workspaceView = document.getElementById('mainAppWorkspace');
+
+            homeView.style.opacity = '0';
+            setTimeout(() => {
+                homeView.style.display = 'none';
+                workspaceView.style.display = 'flex';
+                setTimeout(() => { workspaceView.style.opacity = '1'; }, 50);
+            }, 400);
+        }
+
+        // 3. Sidebar Navigation Control Logic: Update Selected Scope Data Feeds
+        function filterChannelScope(scope) {
+            currentFeedScope = scope;
+            activeFeedIndex = 0;
+
+            document.querySelectorAll('.channel-node').forEach(node => {
+                node.classList.remove('active');
+            });
+            document.getElementById(`chan-${scope}`).classList.add('active');
+
+            renderActiveMediaItem();
+        }
+
+        // 4. Media Carousel Mechanics Engine: Traversing Up and Down Content Lists
+        function stepMediaFeed(direction) {
+            const activeList = mediaLibrary[currentFeedScope];
+            if (!activeList || activeList.length === 0) return;
+            
+            if (direction === 'up') {
+                activeFeedIndex = (activeFeedIndex - 1 + activeList.length) % activeList.length;
+            } else {
+                activeFeedIndex = (activeFeedIndex + 1) % activeList.length;
+            }
+            renderActiveMediaItem();
+        }
+
+        function renderActiveMediaItem() {
+            const targetAsset = mediaLibrary[currentFeedScope][activeFeedIndex];
+            const displayContainer = document.getElementById('mediaPlayerContainer');
+            
+            if (targetAsset) {
+                displayContainer.innerHTML = `<img id="activeMediaAsset" src="${targetAsset.url}" alt="Sky Feed Asset">`;
+                toggleSafetyFilter();
+            }
+        }
+
+        // 5. CSS Effects Modifier Toggle: Ambient Shift Color Manipulations
+        function toggleSafetyFilter() {
+            const isFilterOn = document.getElementById('safetyFilterCheckbox').checked;
+            const assetImg = document.getElementById('activeMediaAsset');
+            
+            if (assetImg) {
+                assetImg.style.filter = isFilterOn ? 'none' : 'hue-rotate(140deg) saturate(1.8) contrast(1.1)';
+            }
+        }
+
+        function mockUploadAsset() {
+            alert("✨ Connecting to Space Station Cloud Node... Asset synchronised successfully.");
+        }
+    </script>
+</body>
+</html>
